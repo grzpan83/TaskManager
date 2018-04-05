@@ -1,5 +1,6 @@
 from django.http import HttpResponse
 from django.shortcuts import render
+from django.views import View
 
 
 def sample_view_1(request):
@@ -23,3 +24,9 @@ def sample_view_2(request):
            'msg': 'This is just a test',
            }
     return render(request, 'test_page.html', ctx)
+
+
+class HomePageView(View):
+    def get(self, request):
+        ctx = {'page_title': 'Tasks page', }
+        return render(request, 'index.html', ctx)
