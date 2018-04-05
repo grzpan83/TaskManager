@@ -19,5 +19,7 @@ def sample_view_1(request):
 
 
 def sample_view_2(request):
-    ctx = {'msg': 'This is just a test'}
+    ctx = {'page_title': 'Test page - template',
+           'msg': 'This is just a test',
+           }
     return render(request, 'test_page.html', ctx)

@@ -1,15 +1,22 @@
-{% load staticfiles %}
-<html>
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-    <link rel="stylesheet" href="{% static 'css/bootstrap.min.css' %}">
-    <link rel="stylesheet" href="{% static 'css/custom.css' %}">
-    <title>Test page - template</title>
-</head>
-<body>
-    <p>{{ msg }}</p>
-    <script src="{% static 'js/jquery-3.3.1.min.js' %}"></script>
-    <script src="{% static 'js/bootstrap.bundle.min.js' %}"></script>
-</body>
-</html>
+{% extends 'base.html' %}
+{% block title %}
+    {{ page_title }}
+{% endblock title %}
+{% block content %}
+    <div class="container">
+        <div class="row myRow bg-warning justify-content-around my-4">
+            <div class="col-md-3 bg-info align-self-center">
+                <h2>R1 C1</h2>
+                <p>{{ msg }} {{ msg }} {{ msg }} {{ msg }}</p>
+            </div>
+            <div class="col-md-3 bg-info align-self-center">
+                <h2>R1 C2</h2>
+                <p>{{ msg }} {{ msg }} {{ msg }} {{ msg }}</p>
+            </div>
+            <div class="col-md-3 bg-info align-self-center">
+                <h2>R1 C3</h2>
+                <p>{{ msg }} {{ msg }} {{ msg }} {{ msg }}</p>
+            </div>
+        </div>
+    </div>
+{% endblock content %}
