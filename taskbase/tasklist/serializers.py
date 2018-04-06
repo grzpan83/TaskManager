@@ -1,10 +1,9 @@
 from rest_framework import serializers
-from .models import Task
-from django.contrib.auth.models import User
+from .models import Task, CustomUser
 
 
 class TaskSerializer(serializers.ModelSerializer):
-    creator = serializers.SlugRelatedField(slug_field='username', queryset=User.objects.all())
+    creator = serializers.SlugRelatedField(slug_field='username', queryset=CustomUser.objects.all())
 
     class Meta:
         model = Task

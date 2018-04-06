@@ -1,5 +1,5 @@
 from django.db import models
-from django.contrib.auth.models import User
+from django.contrib.auth.models import AbstractUser
 
 
 FAMILY = 'FA'
@@ -27,6 +27,15 @@ TASK_PRIORITY_CHOICES = (
 )
 
 
+class CustomUser(AbstractUser):
+    @property
+    def full_name(self):
+        return '{} {}'.format(self.first_name, self.last_name)
+
+    def __str__(self):
+        return self.full_name
+
+
 class Task(models.Model):
     name = models.CharField(max_length=64)
     category = models.CharField(max_length=2, choices=TASK_CATEGORY_CHOICES, default=OTHER)
@@ -35,7 +44,7 @@ class Task(models.Model):
     notes = models.TextField(blank=True, null=True)
     completed = models.BooleanField(default=False)
     created = models.DateTimeField(auto_now_add=True)
-    creator = models.ForeignKey(User, on_delete=models.CASCADE, related_name='tasks_created')
+    creator = models.ForeignKey(CustomUser, on_delete=models.CASCADE, related_name='tasks_created')
 
     def __str__(self):
         return '{} {} {}'.format(self.name, self.created.strftime('%Y-%m-%d %H:%M:%S'), self.creator.username)
