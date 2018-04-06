@@ -23,5 +23,5 @@ urlpatterns = [
     url(r'^test2/$', sample_view_2),
     url(r'^$', HomePageView.as_view(), name='home'),
     url(r'^tasks/$', TasksView.as_view()),
-    url(r'^tasks/(?P<pk>[0-9]+)/$', TaskView.as_view()),
+    url(r'^tasks/(?P<id>[0-9]+)/$', TaskView.as_view()),
 ]

@@ -35,11 +35,14 @@ class HomePageView(View):
         return render(request, 'index.html', ctx)
 
 
+# retrieve all tasks (using GET) or create a new task (using POST)
 class TasksView(generics.ListCreateAPIView):
     queryset = Task.objects.all()
     serializer_class = TaskSerializer
 
 
+# retrieve (using GET), update (using PUT) or remove (using DELETE) a task with a given id
 class TaskView(generics.RetrieveUpdateDestroyAPIView):
+    lookup_field = 'id'
     queryset = Task.objects.all()
     serializer_class = TaskSerializer
