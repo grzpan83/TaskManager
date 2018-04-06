@@ -37,4 +37,5 @@ class Task(models.Model):
     created = models.DateTimeField(auto_now_add=True)
     creator = models.ForeignKey(User, on_delete=models.CASCADE, related_name='tasks_created')
 
-
+    def __str__(self):
+        return '{} {} {}'.format(self.name, self.created.strftime('%Y-%m-%d %H:%M:%S'), self.creator.username)
