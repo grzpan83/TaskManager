@@ -38,10 +38,10 @@ class CustomUser(AbstractUser):
 
 class Task(models.Model):
     name = models.CharField(max_length=64)
-    category = models.CharField(max_length=2, choices=TASK_CATEGORY_CHOICES, default=OTHER)
-    deadline = models.DateTimeField(blank=True, null=True)
-    priority = models.PositiveSmallIntegerField(choices=TASK_PRIORITY_CHOICES, default=LOW)
     notes = models.TextField(blank=True, null=True)
+    deadline = models.DateTimeField(blank=True, null=True)
+    category = models.CharField(max_length=2, choices=TASK_CATEGORY_CHOICES, default=OTHER)
+    priority = models.PositiveSmallIntegerField(choices=TASK_PRIORITY_CHOICES, default=LOW)
     completed = models.BooleanField(default=False)
     created = models.DateTimeField(auto_now_add=True)
     creator = models.ForeignKey(CustomUser, on_delete=models.CASCADE, related_name='tasks_created')
