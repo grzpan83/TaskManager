@@ -6,3 +6,24 @@
 .myRow {
     height: 300px;
 }
+
+#id_name {
+    width: 300px;
+}
+
+textarea {
+    width: 300px;
+    height: 100px;
+}
+
+#id_deadline {
+    width: 100px;
+}
+
+.field_required {
+    border-color: red;
+}
+
+.highlight {
+    background-color: lightgrey;
+}
