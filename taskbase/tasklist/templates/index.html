@@ -4,8 +4,57 @@
 {% endblock title %}
 {% block content %}
     <div class="container">
-        <div class="row py-4">
-            <p>Welcome on main page.</p>
+        <div class="row py-4 justify-content-between">
+            <div class="col-md-auto">
+                <div class="table-responsive">
+                    <form action="" method="post" id="c_form">
+                        {% csrf_token %}
+                        <table>
+                            {{ create_form.as_table }}
+                            <tr>
+                                <td></td>
+                                <td><input id="submit_c" type="submit" value="Add task"></td>
+                            </tr>
+                        </table>
+                    </form>
+                </div>
+            </div>
+            <div class="col-md-auto">
+                <div class="table-responsive">
+                    <form action="" method="post" id="u_form">
+                        {% csrf_token %}
+                        <table>
+                            {{ update_form.as_table }}
+                            <tr>
+                                <td></td>
+                                <td><input id="submit_u" type="submit" value="Update task"></td>
+                            </tr>
+                        </table>
+                    </form>
+                </div>
+            </div>
         </div>
-    </div>
+        <div class="row">
+            <div class="col">
+                <div class="table-responsive">
+                    <table id="tasks-table" class="table table-bordered table-hover">
+                        <thead class="thead-dark">
+                        <tr>
+                            <th>Name</th>
+                            <th>Category</th>
+                            <th>Deadline</th>
+                            <th>Priority</th>
+                            <th>Completed</th>
+                            <th>Created</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <input type="hidden" id="task_id" data-id="-1">
+        </div>
 {% endblock content %}
