@@ -24,6 +24,6 @@ textarea {
     border-color: red;
 }
 
-.highlight {
-    background-color: lightgrey;
+.table-borderless td, .table-borderless th {
+    border: 0;
 }
