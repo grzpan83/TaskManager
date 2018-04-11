@@ -29,7 +29,7 @@ $(function () {
     }
 
     function bool_helper(b) {
-        return (b === true ? 'Yes' : 'No');
+        return (b === true ? '<i class="far fa-check-square"></i>' : '<i class="far fa-square"></i>');
     }
 
     function getTasks() {
@@ -46,18 +46,17 @@ $(function () {
                     newTr.append($('<td>' + this['priority'] + '</td>'));
                     newTr.append($('<td>' + bool_helper(this['completed']) + '</td>'));
                     newTr.append($('<td>' + date_helper(this['created'], true) + '</td>'));
-                    newTr.append($('<td align="center"><button>Delete</button></td>'));
+                    newTr.append($('<td align="center"><i class="far fa-edit"></i></td>'));
+                    newTr.append($('<td align="center"><i class="far fa-trash-alt"></i></td>'));
                     target.append(newTr);
                 });
-                var trs = $('#tasks-table tbody tr');
-                trs.on('click', function () {
-                    getTask($(this).data('id'));
-                    trs.removeClass('highlight');
-                    $(this).addClass('highlight');
-                    t_id.data('id', $(this).data('id'));
+                $('i.fa-edit').on('click', function () {
+                    var id = $($(this).parents('tr')).data('id')
+                    getTask(id);
+                    t_id.data('id', id);
                 });
-                $('button').on('click', function (e) {
-                    e.stopPropagation();
+                $('i.fa-trash-alt').on('click', function (e) {
+                    // e.stopPropagation();
                     delete_task($($(this).parents('tr')).data('id'));
                 });
             }
@@ -77,7 +76,7 @@ $(function () {
                 u_deadline.val(date_helper(data['deadline'], false));
                 u_category.val(data['category']);
                 u_priority.val(data['priority']);
-                u_completed.attr('checked', data['completed']);
+                $(u_completed[0]).prop('checked', data['completed']);
             }
         });
     }
@@ -86,6 +85,9 @@ $(function () {
         $.ajax({
             url: 'http://127.0.0.1:8000/tasks/' + task_id + '/',
             type: 'DELETE',
+            beforeSend: function (xhr) {
+                xhr.setRequestHeader('X-CSRFToken', Cookies.get('csrftoken'))
+            },
             success: function () {
                 getTasks();
             }
@@ -100,8 +102,7 @@ $(function () {
             "deadline": c_deadline.val() === '' ? null : c_deadline.val() + 'T00:00',
             "priority": c_priority.val(),
             "notes": c_notes.val() === '' ? null : c_notes.val(),
-            "completed": false,
-            "creator": "user2"
+            "completed": false
         };
 
         c_name.val('');
@@ -117,6 +118,9 @@ $(function () {
                 data: data,
                 type: 'POST',
                 dataType: 'json',
+                beforeSend: function (xhr) {
+                    xhr.setRequestHeader('X-CSRFToken', Cookies.get('csrftoken'))
+                },
                 success: function (data) {
                     $(data).each(function () {
                         getTasks();
@@ -136,8 +140,7 @@ $(function () {
             "deadline": u_deadline.val() === '' ? null : u_deadline.val() + 'T00:00',
             "priority": Number(u_priority.val()),
             "notes": u_notes.val() === '' ? null : u_notes.val(),
-            "completed": u_completed[0].checked,
-            "creator": "user2"
+            "completed": u_completed[0].checked
         };
 
         u_name.val('');
@@ -145,7 +148,7 @@ $(function () {
         u_deadline.val('');
         u_priority.val(4);
         u_notes.val('');
-        $(u_completed[0]).attr('checked', false);
+        $(u_completed[0]).prop('checked', false);
 
         if (data['name'].length > 0) {
             u_btn.attr('disabled', true);
@@ -153,6 +156,9 @@ $(function () {
                 url: 'http://127.0.0.1:8000/tasks/' + t_id.data('id') + '/',
                 data: data,
                 type: 'PUT',
+                beforeSend: function (xhr) {
+                    xhr.setRequestHeader('X-CSRFToken', Cookies.get('csrftoken'))
+                },
                 success: function () {
                     getTasks()
                 },
