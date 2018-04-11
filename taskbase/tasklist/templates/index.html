@@ -6,6 +6,22 @@
     <div class="container">
         <div class="row py-4 justify-content-between">
             <div class="col-md-auto">
+                {% if user.is_authenticated %}
+                    {% if user.first_name %}
+                        <span class="text-muted text-uppercase">Welcome, {{ user.first_name }}</span>
+                    {% else %}
+                        <span class="text-muted text-uppercase">Welcome, {{ user.username }}</span>
+                    {% endif %}
+                    &nbsp;&nbsp;<a href="{% url 'logout' %}" class="text-info text-uppercase">LOG OUT</a>
+                {% else %}
+                    <span class="text-muted text-uppercase">Not logged in</span>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+    <div class="container">
+        <div class="row justify-content-between">
+            <div class="col-md-auto">
                 <div class="table-responsive">
                     <form action="" method="post" id="c_form">
                         {% csrf_token %}
@@ -34,11 +50,11 @@
                 </div>
             </div>
         </div>
-        <div class="row">
+        <div class="row my-3">
             <div class="col">
                 <div class="table-responsive">
-                    <table id="tasks-table" class="table table-bordered table-hover">
-                        <thead class="thead-dark">
+                    <table id="tasks-table" class="table table-borderless table-striped">
+                        <thead class="text-uppercase table-borderless">
                         <tr>
                             <th>Name</th>
                             <th>Category</th>
@@ -46,6 +62,8 @@
                             <th>Priority</th>
                             <th>Completed</th>
                             <th>Created</th>
+                            <th></th>
+                            <th></th>
                         </tr>
                         </thead>
                         <tbody>

@@ -19,3 +19,8 @@ class UpdateTaskForm(forms.ModelForm):
         widgets = {
             'deadline': forms.DateTimeInput(attrs={'id': 'id_deadline_u'}),
         }
+
+
+class LoginForm(forms.Form):
+    username = forms.CharField(max_length=150, label='user')
+    password = forms.CharField(widget=forms.PasswordInput, max_length=128, label='pass')
