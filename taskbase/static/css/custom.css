@@ -27,3 +27,11 @@ textarea {
 .table-borderless td, .table-borderless th {
     border: 0;
 }
+
+textarea {
+    resize: none;
+}
+
+.btn-secondary.focus, .btn-secondary:focus {
+    box-shadow: none;
+}

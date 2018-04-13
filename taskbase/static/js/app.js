@@ -12,9 +12,10 @@ $(function () {
         u_deadline = $('#u_form #id_deadline_u'),
         u_priority = $('#u_form #id_priority'),
         u_completed = $('#u_form #id_completed'),
-        u_btn =  $('#submit_u');
-
-    u_btn.attr('disabled', true);
+        u_btn = $('#submit_u'),
+        c_cancel = $('#cancel_c'),
+        u_cancel = $('#cancel_u'),
+        u_form_fields = [u_name, u_notes, u_deadline, u_category, u_priority, u_completed, u_btn];
 
     c_name.on('click', function () {
         $(this).removeClass('field_required');
@@ -32,31 +33,107 @@ $(function () {
         return (b === true ? '<i class="far fa-check-square"></i>' : '<i class="far fa-square"></i>');
     }
 
+    function reset_form(f_name) {
+        if (f_name === 'u_form') {
+            u_name.val('');
+            u_category.val('OT');
+            u_deadline.val('');
+            u_priority.val(4);
+            u_notes.val('');
+            $(u_completed[0]).prop('checked', false);
+        } else if (f_name === 'c_form') {
+            c_name.val('');
+            c_category.val('OT');
+            c_deadline.val('');
+            c_priority.val(4);
+            c_notes.val('');
+        }
+    }
+
+    function disable_update_form_fields() {
+        $(u_form_fields).each(function () {
+            $(this).attr('disabled', true);
+        });
+    }
+
+    function enable_update_form_fields() {
+        $(u_form_fields).each(function () {
+            $(this).attr('disabled', false);
+        });
+    }
+
+    function get_category_name(cat_id) {
+        var cat_name = '';
+        switch (cat_id) {
+            case 'FA':
+                cat_name = 'Family';
+                break;
+            case 'WO':
+                cat_name = 'Work';
+                break;
+            case 'FR':
+                cat_name = 'Friends';
+                break;
+            case 'PE':
+                cat_name = 'Personal';
+                break;
+            case 'OT':
+                cat_name = 'Other';
+        }
+        return cat_name;
+    }
+
+    function get_priority_name(pri_id) {
+        var pri_name = 0;
+        switch (pri_id) {
+            case 1:
+                pri_name = '1-Highest';
+                break;
+            case 2:
+                pri_name = '2-High';
+                break;
+            case 3:
+                pri_name = '3-Medium';
+                break;
+            case 4:
+                pri_name = '4-Low';
+        }
+        return pri_name;
+    }
+
     function getTasks() {
+        u_cancel.attr('hidden', true);
         $.ajax({
             url: 'http://127.0.0.1:8000/tasks/',
             success: function (data) {
-                var target = $('#tasks-table tbody');
+                var target = $('#tasks-table tbody'),
+                    frag = document.createDocumentFragment(),
+                    newTr = null;
                 target.empty();
                 $(data).each(function () {
-                    var newTr = $('<tr data-id="' + this['id'] + '"></tr>');
-                    newTr.append($('<td>' + this['name'] + '</td>'));
-                    newTr.append($('<td>' + this['category'] + '</td>'));
-                    newTr.append($('<td>' + date_helper(this['deadline'], false) + '</td>'));
-                    newTr.append($('<td>' + this['priority'] + '</td>'));
-                    newTr.append($('<td>' + bool_helper(this['completed']) + '</td>'));
-                    newTr.append($('<td>' + date_helper(this['created'], true) + '</td>'));
-                    newTr.append($('<td align="center"><i class="far fa-edit"></i></td>'));
-                    newTr.append($('<td align="center"><i class="far fa-trash-alt"></i></td>'));
-                    target.append(newTr);
+                    newTr = $('<tr/>').attr('data-id', this['id']);
+                    $('<td/>').addClass('text-left').text(this['name']).appendTo(newTr);
+                    $('<td/>').text(get_category_name(this['category'])).appendTo(newTr);
+                    $('<td/>').text(date_helper(this['deadline'], false)).appendTo(newTr);
+                    $('<td/>').addClass('text-left').text(get_priority_name(this['priority'])).appendTo(newTr);
+                    $('<td/>').html(bool_helper(this['completed'])).appendTo(newTr);
+                    $('<td/>').addClass('text-left').text(date_helper(this['created'], true)).appendTo(newTr);
+                    $('<td/>').html('<i class="far fa-edit fa-lg"></i>').appendTo(newTr);
+                    $('<td/>').html('<i class="far fa-trash-alt fa-lg"></i>').appendTo(newTr);
+                    frag.append(newTr[0]);
                 });
+                target.append(frag);
+
+
                 $('i.fa-edit').on('click', function () {
-                    var id = $($(this).parents('tr')).data('id')
+                    var id = $($(this).parents('tr')).data('id');
+                    $('td.bg-info').removeClass();
+                    $(this).parent().addClass('bg-info');
                     getTask(id);
                     t_id.data('id', id);
+                    u_cancel.attr('hidden', false);
                 });
-                $('i.fa-trash-alt').on('click', function (e) {
-                    // e.stopPropagation();
+                $('i.fa-trash-alt').on('click', function () {
                     delete_task($($(this).parents('tr')).data('id'));
                 });
             }
@@ -70,10 +147,10 @@ $(function () {
             dataType: 'json',
             success: function (data) {
                 u_name.removeClass('field_required');
-                u_btn.attr('disabled', false);
+                enable_update_form_fields();
                 u_name.val(data['name']);
                 u_notes.val(data['notes']);
-                u_deadline.val(date_helper(data['deadline'], false));
+                u_deadline.val(''); // Setting date field to empty string so it can be left empty while updating
                 u_category.val(data['category']);
                 u_priority.val(data['priority']);
                 $(u_completed[0]).prop('checked', data['completed']);
@@ -90,6 +167,8 @@ $(function () {
             },
             success: function () {
                 getTasks();
+                reset_form('u_form');
+                disable_update_form_fields();
             }
         });
     }
@@ -105,11 +184,7 @@ $(function () {
             "completed": false
         };
 
-        c_name.val('');
-        c_category.val('OT');
-        c_deadline.val('');
-        c_priority.val(4);
-        c_notes.val('');
+        reset_form('c_form');
 
         if (data['name'].length > 0) {
             c_name.removeClass('field_required');
@@ -121,10 +196,8 @@ $(function () {
                 beforeSend: function (xhr) {
                     xhr.setRequestHeader('X-CSRFToken', Cookies.get('csrftoken'))
                 },
-                success: function (data) {
-                    $(data).each(function () {
-                        getTasks();
-                    });
+                success: function () {
+                    getTasks();
                 }
             });
         } else {
@@ -143,13 +216,6 @@ $(function () {
             "completed": u_completed[0].checked
         };
 
-        u_name.val('');
-        u_category.val('OT');
-        u_deadline.val('');
-        u_priority.val(4);
-        u_notes.val('');
-        $(u_completed[0]).prop('checked', false);
-
         if (data['name'].length > 0) {
             u_btn.attr('disabled', true);
             $.ajax({
@@ -160,7 +226,10 @@ $(function () {
                     xhr.setRequestHeader('X-CSRFToken', Cookies.get('csrftoken'))
                 },
                 success: function () {
-                    getTasks()
+                    getTasks();
+                    reset_form('u_form');
+                    disable_update_form_fields();
+                    $('td.bg-info').removeClass();
                 },
             });
         } else {
@@ -168,7 +237,20 @@ $(function () {
         }
     });
 
-    getTasks();
+    c_cancel.on('click', function (e) {
+        e.preventDefault();
+        c_name.removeClass('field_required');
+        reset_form('c_form');
+    });
+
+    u_cancel.on('click', function (e) {
+        e.preventDefault();
+        u_name.removeClass('field_required');
+        reset_form('u_form');
+        disable_update_form_fields();
+        $(this).attr('hidden', true);
+        $('td.bg-info').removeClass()
+    });
 
     $("#id_deadline_c").datepicker({
         dateFormat: "yy-mm-dd",
@@ -187,4 +269,6 @@ $(function () {
         changeYear: true,
         showWeek: true,
     });
+
+    getTasks();
 });
