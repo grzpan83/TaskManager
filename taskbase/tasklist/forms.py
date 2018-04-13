@@ -1,6 +1,5 @@
 from django import forms
-from .models import Task
-from django.utils.translation import ugettext_lazy as _
+from .models import Task, CustomUser
 
 
 class CreateTaskForm(forms.ModelForm):
@@ -35,3 +34,10 @@ class UpdateTaskForm(forms.ModelForm):
 class LoginForm(forms.Form):
     username = forms.CharField(max_length=150, label='user')
     password = forms.CharField(widget=forms.PasswordInput, max_length=128, label='pass')
+
+
+class RegisterForm(forms.Form):
+    username = forms.CharField(max_length=150, label='user')
+    email = forms.CharField(max_length=255, label='email', widget=forms.EmailInput)
+    password_1 = forms.CharField(widget=forms.PasswordInput, label='password')
+    password_2 = forms.CharField(widget=forms.PasswordInput, label='confirm password')

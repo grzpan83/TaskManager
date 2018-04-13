@@ -15,7 +15,8 @@ Including another URLconf
 """
 from django.conf.urls import url
 from django.contrib import admin
-from tasklist.views import sample_view_1, sample_view_2, HomePageView, TasksView, TaskView, LoginView, LogoutView
+from tasklist.views import sample_view_1, sample_view_2, HomePageView, TasksView, TaskView, LoginView, LogoutView, \
+    RegisterView
 
 urlpatterns = [
     url(r'^admin/', admin.site.urls),
@@ -26,4 +27,5 @@ urlpatterns = [
     url(r'^tasks/(?P<id>[0-9]+)/$', TaskView.as_view()),
     url(r'^login/$', LoginView.as_view(), name='login'),
     url(r'^logout/$', LogoutView.as_view(), name='logout'),
+    url(r'^register/$', RegisterView.as_view(), name='register'),
 ]

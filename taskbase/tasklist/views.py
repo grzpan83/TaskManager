@@ -5,9 +5,10 @@ from django.http import HttpResponse
 from django.shortcuts import render, redirect
 from django.views import View
 from rest_framework import generics
-from .models import Task
+from .models import Task, CustomUser
 from .serializers import TaskSerializer
-from .forms import CreateTaskForm, UpdateTaskForm, LoginForm
+from .forms import CreateTaskForm, UpdateTaskForm, LoginForm, RegisterForm
+from re import search
 
 
 def sample_view_1(request):
@@ -83,3 +84,30 @@ class LogoutView(View):
     def get(self, request):
         logout(request)
         return redirect(settings.LOGIN_URL)
+
+
+class RegisterView(View):
+    def get(self, request):
+        form = RegisterForm()
+        ctx = {'page_title': 'Register page', 'form': form, }
+        return render(request, 'register.html', ctx)
+
+    def post(self, request):
+        form = RegisterForm(request.POST)
+        error = ''
+        if form.is_valid():
+            username = form.cleaned_data['username']
+            password1 = form.cleaned_data['password_1']
+            password2 = form.cleaned_data['password_2']
+            email = form.cleaned_data['email']
+            if CustomUser.objects.filter(username=username).count() > 0:
+                error = 'Username already taken'
+            elif search(r'^[A-Za-z0-9_]{4,}$', username) is None:
+                error = 'Username should be 4 (or more) characters long\nValid characters: letters, digits and _'
+            elif password1 and password2 and password1 != password2:
+                error = "Passwords don't match"
+            else:
+                CustomUser.objects.create_user(username, email, password1)
+                return redirect(settings.LOGIN_URL)
+        ctx = {'form': form, 'error': error}
+        return render(request, 'register.html', ctx)
